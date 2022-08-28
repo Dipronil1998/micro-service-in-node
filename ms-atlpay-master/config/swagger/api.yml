@@ -1,0 +1,5145 @@
+swagger: "2.0"
+info:
+  description: "AGPAYTECH"
+  version: "1.0.0"
+  title: "ATLPAY API"
+tags:
+- name: "Authentication"
+  description: "Operations about Login,Forget Password, Create Accounts"
+- name: "Master"
+  description: "Operations Country and Currency"
+- name: "Admin"
+  description: "Operations About Admin"
+- name: "Merchant"
+  description: "Operations About Merchant"
+schemes:
+- "http"
+securityDefinitions:
+  JWT:
+    type: apiKey
+    in: header
+    name: jwt 
+paths:
+  /v1/auth/user/signup:
+    post:
+      tags:
+      - "Authentication"
+      summary: "Create a User Account"
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      - in: "body"
+        name: "Request Body"
+        description: "Create a new User Account(for Customer Only)"
+        required: true
+        schema:
+          $ref: "#/definitions/SignUp"
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/SignUpSuccessfully"
+        "400":
+          description: "400 Error Response"
+          schema:
+            $ref: "#/definitions/400"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/auth/user/login:
+    post:
+      tags:
+      - "Authentication"
+      summary: "Login User"
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      - in: "body"
+        name: "Request Body"
+        description: "checks credentials for Users(Admin or Customer Both)"
+        required: true
+        schema:
+          $ref: "#/definitions/Login"
+      responses:
+        "200":
+          description: "Ok"
+          headers:
+            session:
+              type: string
+              description: "header session for otp verification"
+          schema:
+            $ref: "#/definitions/SentOtp"
+        "400":
+          description: "400 Error Response"
+          schema:
+            $ref: "#/definitions/400"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/auth/user/{id}:
+    put:
+      tags:
+      - "Authentication"
+      summary: "User Update"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "userId"
+        in: "path"
+        required: true
+        type: string
+      - in: "body"
+        name: "Request Body"
+        description: "checks credentials for Users Update"
+        required: true
+        schema:
+          $ref: "#/definitions/update"
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/DataUpdate"
+        "400":
+          description: "400 Error Response"
+          schema:
+            $ref: "#/definitions/400"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/auth/user:
+    get:
+      tags:
+      - "Authentication"
+      summary: "Get All User"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/UserDetail"
+        "400":
+          description: "400 Error Response"
+          schema:
+            $ref: "#/definitions/400"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/auth/user/{email}:
+    get:
+      tags:
+      - "Authentication"
+      summary: "Get User By Email"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/UserDetail"
+        "400":
+          description: "400 Error Response"
+          schema:
+            $ref: "#/definitions/400"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/auth/platform:
+    get:
+      tags:
+      - "Authentication"
+      summary: "Get a List of Platform"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/UserPlatform"
+        "400":
+          description: "400 Error Response"
+          schema:
+            $ref: "#/definitions/400"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/auth/platform/{code}:
+    get:
+      tags:
+      - "Authentication"
+      summary: "Get a Platform by CODE"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      - in: "path"
+        name: "code"
+        description: "Fetch Data by CODE"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/UserPlatform"
+        "400":
+          description: "400 Error Response"
+          schema:
+            $ref: "#/definitions/400"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/auth/platform/{code}/enable:
+    put:
+      tags:
+      - "Authentication"
+      summary: "Enable By Code"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      - in: "path"
+        name: "code"
+        description: "Enable Data by CODE"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/DataUpdate"
+        "400":
+          description: "400 Error Response"
+          schema:
+            $ref: "#/definitions/400"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/auth/platform/{code}/disable:
+    put:
+      tags:
+      - "Authentication"
+      summary: "Disable By Code"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      - in: "path"
+        name: "code"
+        description: "Enable Data by CODE"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/DataUpdate"
+        "400":
+          description: "400 Error Response"
+          schema:
+            $ref: "#/definitions/400"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/auth/device:
+    get:
+      tags:
+      - "Authentication"
+      summary: "Get a List of Device"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/Device"
+        "400":
+          description: "400 Error Response"
+          schema:
+            $ref: "#/definitions/400"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/auth/device/{email}:
+    get:
+      tags:
+      - "Authentication"
+      summary: "Get a Platform by Email"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      - in: "path"
+        name: "email"
+        description: "Fetch Data by Email"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/Device"
+        "400":
+          description: "400 Error Response"
+          schema:
+            $ref: "#/definitions/400"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/auth/info/{email}:
+    get:
+      tags:
+      - "Authentication"
+      summary: "Get User LoginLog by Email"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      - in: "path"
+        name: "email"
+        description: "Fetch Data by Email"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/UserLoginLog"
+        "400":
+          description: "400 Error Response"
+          schema:
+            $ref: "#/definitions/400"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/auth/info:
+    get:
+      tags:
+      - "Authentication"
+      summary: "Get User LoginLog"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/UserLoginLog"
+        "400":
+          description: "400 Error Response"
+          schema:
+            $ref: "#/definitions/400"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/auth/user/{id}/block:
+    put:
+      tags:
+      - "Authentication"
+      summary: "Block User"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      - in: path
+        name: userId
+        required: true
+        type: string
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/DataUpdate"
+        "400":
+          description: "400 Error Response"
+          schema:
+            $ref: "#/definitions/400"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/auth/user/{id}/unblock:
+    put:
+      tags:
+      - "Authentication"
+      summary: "Unblock User"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      - in: path
+        name: userId
+        required: true
+        type: string
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/DataUpdate"
+        "400":
+          description: "400 Error Response"
+          schema:
+            $ref: "#/definitions/400"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/auth/admin/{id}/block:
+    put:
+      tags: 
+      - "Authentication"
+      summary: "Block Admin"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      - in: path
+        name: userId
+        required: true
+        type: string
+      - in: "body"
+        name: "Request Body"
+        description: "Eneter Date for expiry"
+        required: true
+        schema:
+          $ref: "#/definitions/expiry"
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/DataUpdate"
+        "400":
+          description: "400 Error Response"
+          schema:
+            $ref: "#/definitions/400"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/auth/admin/{id}/unblock:
+    put:
+      tags:
+      - "Authentication"
+      summary: "Unblock Admin"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      - in: path
+        name: userId
+        required: true
+        type: string
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/DataUpdate"
+        "400":
+          description: "400 Error Response"
+          schema:
+            $ref: "#/definitions/400"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/auth/admin:
+    get:
+      tags:
+      - "Authentication"
+      summary: "Get All Admin Detail"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/AdminDetail"
+        "400":
+          description: "400 Error Response"
+          schema:
+            $ref: "#/definitions/400"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/auth/admin/{id}:
+    get:
+      tags:
+      - "Authentication"
+      summary: "Get Admin By ID"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/AdminDetail"
+        "400":
+          description: "400 Error Response"
+          schema:
+            $ref: "#/definitions/400"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+    put:
+      tags:
+      - "Authentication"
+      summary: "Admin Update"
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      - in: "body"
+        name: "Request Body"
+        description: ""
+        required: true
+        schema:
+          $ref: "#/definitions/AdminUpdate"
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/DataUpdate"
+        "400":
+          description: "400 Error Response"
+          schema:
+            $ref: "#/definitions/400"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/auth/user/{id}/password/change:
+    put:
+      tags:
+      - "Authentication"
+      summary: "Change Password For User"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      - in: path
+        name: userId
+        required: true
+        type: string
+      - in: "body"
+        name: "Request Body"
+        description: ""
+        required: true
+        schema:
+          $ref: "#/definitions/ResetPassword"
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/PasswordUpdate"
+        "400":
+          description: "400 Error Response"
+          schema:
+            $ref: "#/definitions/IncorrectPassword"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/auth/user/password/forget:
+    put:
+      tags:
+      - "Authentication"
+      summary: "Forget Password For User"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      - in: path
+        name: userId
+        required: true
+        type: string
+      - in: "body"
+        name: "Request Body"
+        description: ""
+        required: true
+        schema:
+          $ref: "#/definitions/ForgetPasswordEmail"
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/ForgetPasswordResponce"
+        "400":
+          description: "400 Error Response"
+          schema:
+            $ref: "#/definitions/AccountDisable"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/auth/user/password/reset/{token}:
+    put:
+      tags:
+      - "Authentication"
+      summary: "Reset Password For User after geting email link"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      - in: path
+        name: userId
+        required: true
+        type: string
+      - in: "body"
+        name: "Request Body"
+        description: ""
+        required: true
+        schema:
+          $ref: "#/definitions/ForgetPassword"
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/PasswordUpdate"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/auth/admin/{id}/password/change:
+    put:
+      tags:
+      - "Authentication"
+      summary: "Change Password For Admin"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      - in: path
+        name: userId
+        required: true
+        type: string
+      - in: "body"
+        name: "Request Body"
+        description: ""
+        required: true
+        schema:
+          $ref: "#/definitions/ResetPassword"
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/PasswordUpdate"
+        "400":
+          description: "400 Error Response"
+          schema:
+            $ref: "#/definitions/IncorrectPassword"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/auth/admin/password/forget:
+    put:
+      tags:
+      - "Authentication"
+      summary: "Forget Password For Admin"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      - in: path
+        name: userId
+        required: true
+        type: string
+      - in: "body"
+        name: "Request Body"
+        description: ""
+        required: true
+        schema:
+          $ref: "#/definitions/ForgetPasswordEmail"
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/ForgetPasswordResponce"
+        "400":
+          description: "400 Error Response"
+          schema:
+            $ref: "#/definitions/AccountDisable"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/auth/admin/password/reset/{token}:
+    put:
+      tags:
+      - "Authentication"
+      summary: "Reset Password For Admin after geting email link"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      - in: path
+        name: userId
+        required: true
+        type: string
+      - in: "body"
+        name: "Request Body"
+        description: ""
+        required: true
+        schema:
+          $ref: "#/definitions/ForgetPassword"
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/PasswordUpdate"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/auth/admin/login:
+    post:
+      tags:
+      - "Authentication"
+      summary: "Admin Login"
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      - in: "body"
+        name: "Request Body"
+        description: ""
+        required: true
+        schema:
+          $ref: "#/definitions/Login"
+      responses:
+        "200":
+          description: "Ok"
+          headers:
+            session:
+              type: string
+              description: "header session for otp verification"
+          schema:
+            $ref: "#/definitions/SentOtp"
+        "400":
+          description: "400 Error Response"
+          schema:
+            $ref: "#/definitions/400"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/auth/admin/create:
+    post:
+      tags:
+      - "Authentication"
+      summary: "Admin Create"
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      - in: "body"
+        name: "Request Body"
+        description: ""
+        required: true
+        schema:
+          $ref: "#/definitions/AdminSignUp"
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/AdminAddSuccessfully"
+        "400":
+          description: "400 Error Response"
+          schema:
+            $ref: "#/definitions/400"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/auth/admin/logout:
+    get:
+      tags:
+      - "Authentication"
+      summary: "Admin Logout"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "session"
+        in: "header"
+        required: true
+        type: string
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/AdminLogout"
+        "400":
+          description: "400 Error Response"
+          schema:
+            $ref: "#/definitions/400"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/auth/admin/info:
+    get:
+      tags:
+      - "Authentication"
+      summary: "Get Admin LoginLog"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/AdminLoginLog"
+        "400":
+          description: "400 Error Response"
+          schema:
+            $ref: "#/definitions/400"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/auth/admin/info/{email}:
+    get:
+      tags:
+      - "Authentication"
+      summary: "Get Admin LoginLog by Email"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      - in: "path"
+        name: "email"
+        description: "Fetch Data by Email"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/AdminLoginLog"
+        "400":
+          description: "400 Error Response"
+          schema:
+            $ref: "#/definitions/400"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/auth/role:
+    get:
+      tags:
+      - "Authentication"
+      summary: "Get Role"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/MerchantAccessRole"
+        "400":
+          description: "400 Error Response"
+          schema:
+            $ref: "#/definitions/400"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/auth/email/{email}/exist:
+    get:
+      tags:
+      - "Authentication"
+      summary: "Check Email Exist"
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "email"
+        in: "path"
+        required: true
+        type: string
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/EmailAvailable"
+        "400":
+          description: "400 Error Response"
+          schema:
+            $ref: "#/definitions/EmailNotAvailable"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/auth/username/{username}/exist:
+    get:
+      tags:
+      - "Authentication"
+      summary: "Check Username Exist"
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "username"
+        in: "path"
+        required: true
+        type: string
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/UsernameAvailable"
+        "400":
+          description: "400 Error Response"
+          schema:
+            $ref: "#/definitions/UsernameNotAvailable"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/auth/2fa/verifyotp:
+    post:
+      tags:
+      - "Authentication"
+      summary: "Verify OTP"
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "session"
+        in: "header"
+        required: true
+        type: string
+      - name: "session"
+        in: "header"
+        required: true
+        type: string
+      - in: "body"
+        name: "Request Body"
+        description: ""
+        required: true
+        schema:
+          $ref: "#/definitions/Otp"
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/LogInSuccessfully"
+        "400":
+          description: "400 Error Response"
+          schema:
+            $ref: "#/definitions/UsernameNotAvailable"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/auth/admin/email/{email}/exist:
+    get:
+      tags:
+      - "Authentication"
+      summary: "Check Email Exist For Admin"
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "email"
+        in: "path"
+        required: true
+        type: string
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/EmailAvailable"
+        "400":
+          description: "400 Error Response"
+          schema:
+            $ref: "#/definitions/EmailNotAvailable"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/auth/role/merchant:
+    get:
+      tags:
+      - "Authentication"
+      summary: "Get All Merchant By Role"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/MerchantInformation"
+        "400":
+          description: "400 Error Response"
+          schema:
+            $ref: "#/definitions/400"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/DataNotFound"
+        "500":
+          description: "500 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/auth/role/admin:
+    get:
+      tags:
+      - "Authentication"
+      summary: "Get All Admin By Role"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/AdminInformation"
+        "400":
+          description: "400 Error Response"
+          schema:
+            $ref: "#/definitions/400"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/DataNotFound"
+        "500":
+          description: "500 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/admin/info/{id}:
+    get:
+      tags:
+      - "Authentication"
+      summary: "Get Admin LoginLog by Id"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      - in: "path"
+        name: "id"
+        description: "Fetch Data by Id"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/UserLoginLog"
+        "400":
+          description: "400 Error Response"
+          schema:
+            $ref: "#/definitions/400"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/auth/admin/{id}/suspend:
+    put:
+      tags:
+      - "Authentication"
+      summary: "Suspend Admin by ID"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/Accountsuspended"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/auth/user/{id}/suspend:
+    put:
+      tags:
+      - "Authentication"
+      summary: "Suspend user by ID"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/Accountsuspended"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/auth/note/admin/{id}:
+    get:
+      tags:
+      - "Authentication"
+      summary: "Get Admin Note by Id"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      - in: "path"
+        name: "id"
+        description: "Fetch Data by Id"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/AdminNote"
+        "400":
+          description: "400 Error Response"
+          schema:
+            $ref: "#/definitions/400"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/base/currency:
+    get:
+      tags:
+      - "Master"
+      summary: "Returns a list of currencies"
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/Currency"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "400 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/base/currency/{iso}:
+    get:
+      tags:
+      - "Master"
+      summary: "Returns a currency by iso"
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      - in: "path"
+        name: "iso"
+        description: "checks credentials for Users(Admin or Customer Both)"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/Currency"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "400 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+    put:
+      tags:
+      - "Master"
+      summary: "Update a currency by iso"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      - in: "path"
+        name: "iso"
+        description: "Update By iso"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        required: true
+        schema:
+          $ref: "#/definitions/UpdateCurrencyData"
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/DataUpdate"
+        "400":
+          description: "400 Error Response"
+          schema:
+            $ref: "#/definitions/400"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "400 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/base/country:
+    get:
+      tags:
+      - "Master"
+      summary: "Returns a list of currencies"
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/Country"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "400 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/base/country/{iso_numeric}:
+    get:
+      tags:
+      - "Master"
+      summary: "Returns a country by iso_numeric"
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      - in: "path"
+        name: "iso_numeric"
+        description: "Get for iso_numeric"
+        required: true
+        type: "integer"
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/Country"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "400 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+    put:
+      tags:
+      - "Master"
+      summary: "Update a country by iso_numeric"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      - in: "path"
+        name: "iso_numeric"
+        description: "Update for iso_numeric"
+        required: true
+        type: "integer"
+      - in: "body"
+        name: "body"
+        required: true
+        schema: 
+          $ref: "#/definitions/UpdateCountryData"
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/DataUpdate"
+        "400":
+          description: "400 Error Response"
+          schema:
+            $ref: "#/definitions/400"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "400 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/base/country/ip/current:
+    get:
+      tags:
+      - "Master"
+      summary: "Returns Current Country by IP"
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/CurrentCountry"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "400 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/base/country/changestatus:
+    put:
+      tags:
+      - "Master"
+      summary: "Block Country By IsoNumeric"
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      - in: path
+        name: userId
+        required: true
+        type: string
+      - in: "body"
+        name: "Request Body"
+        description: ""
+        required: true
+        schema:
+          $ref: "#/definitions/ChangeCountryStatus"
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/Country"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "400 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/base/country/changestatus/country:
+    put:
+      tags:
+      - "Master"
+      summary: "Block Multiple Country By IsoNumeric"
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      - in: path
+        name: userId
+        required: true
+        type: string
+      - in: "body"
+        name: "Request Body"
+        description: ""
+        required: true
+        schema:
+          $ref: "#/definitions/ChangeMultipleCountryStatus"
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/Country"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "400 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/admin/businessrole:
+    get:
+      tags:
+      - "Admin"
+      summary: "Get All Business Role"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/BusinessRole"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/admin/businessrole/{code}:
+    get:
+      tags:
+      - "Admin"
+      summary: "Get Business Role By code"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      - in: "path"
+        name: "code"
+        description: "Get Data By Code"
+        required: true
+        type: "integer"
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/BusinessRole"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/admin/businesslegalentitytype:
+    get:
+      tags:
+      - "Admin"
+      summary: "Get All Business Legal Entity Type"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/BusinessLegalEntity"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/admin/businesslegalentitytype/{code}:
+    get:
+      tags:
+      - "Admin"
+      summary: "Get Business Legal Entity Type By code"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      - in: "path"
+        name: "code"
+        description: "Get Data By Code"
+        required: true
+        type: "integer"
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/BusinessLegalEntity"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/admin/businesssectors:
+    get:
+      tags:
+      - "Admin"
+      summary: "Get All Business Sectors"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/BusinessSectors"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/admin/businesssectors/{code}:
+    get:
+      tags:
+      - "Admin"
+      summary: "Get Business Sectors By code"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      - in: "path"
+        name: "code"
+        description: "Get Data By Code"
+        required: true
+        type: "integer"
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/BusinessSectors"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/admin/civilstatus:
+    get:
+      tags:
+      - "Admin"
+      summary: "Get All Civil Status"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/CivilStatus"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/admin/civilstatus/{code}:
+    get:
+      tags:
+      - "Admin"
+      summary: "Get Civil Status By code"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      - in: "path"
+        name: "code"
+        description: "Get Data By Code"
+        required: true
+        type: "integer"
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/CivilStatus"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/admin/compliancedocumentcategory:
+    get:
+      tags:
+      - "Admin"
+      summary: "Get All Compliance Document Category"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/ComplianceDocumentCategory"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/admin/compliancedocumentcategory/{code}:
+    get:
+      tags:
+      - "Admin"
+      summary: "Get Compliance Document Category By code"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      - in: "path"
+        name: "code"
+        description: "Get Data By Code"
+        required: true
+        type: "integer"
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/ComplianceDocumentCategory"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/admin/documentrejectreason:
+    get:
+      tags:
+      - "Admin"
+      summary: "Get All Document Reject Reason"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/DocumentRejectReason"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/admin/documentrejectreason/{id}:
+    get:
+      tags:
+      - "Admin"
+      summary: "Get Document Reject Reason By ID"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      - in: "path"
+        name: "ID"
+        description: "Get Data By ID"
+        required: true
+        type: "integer"
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/DocumentRejectReason"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/admin/honorofic:
+    get:
+      tags:
+      - "Admin"
+      summary: "Get All Honorofic"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/Honorofic"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/admin/honorofic/{code}:
+    get:
+      tags:
+      - "Admin"
+      summary: "Get Honorofic By code"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      - in: "path"
+        name: "code"
+        description: "Get Data By Code"
+        required: true
+        type: "integer"
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/Honorofic"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/merchant:
+    post:
+      tags:
+      - "Merchant"
+      summary: "Register Merchant"
+      consumes:
+        - multipart/form-data
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      - in: "body"
+        name: "Request Body"
+        description: "Create a new User Account(for Customer Only)"
+        required: true
+        schema:
+          $ref: "#/definitions/Merchant"
+      - in: "formData"
+        name: "merchant_document_upload_1"
+        type: file
+        description: "Create a new User Account(for Customer Only)"
+        required: true
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/BankDetails"
+        "400":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/400"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/merchant/bankdetails:
+    get:
+      tags:
+      - "Merchant"
+      summary: "Get All Bank Details"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/BankDetails"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/merchant/bankdetails/{id}:
+    get:
+      tags:
+      - "Merchant"
+      summary: "Get Bank Details By Id"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      - in: "path"
+        name: "Id"
+        description: "Get Data By Id"
+        required: true
+        type: "integer"
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/BankDetails"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/merchant/merchantbusinessprofile:
+    get:
+      tags:
+      - "Merchant"
+      summary: "Get All Merchant Business Profile"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/MerchantBusinessProfile"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/merchant/merchantbusinessprofile/{id}:
+    get:
+      tags:
+      - "Merchant"
+      summary: "Get Merchant Business Profile By id"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      - in: "path"
+        name: "id"
+        description: "Get Data By ID"
+        required: true
+        type: "integer"
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/MerchantBusinessProfile"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/merchant/merchantdocument:
+    get:
+      tags:
+      - "Merchant"
+      summary: "Get All Merchant Document"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/MerchantDocument"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/merchant/merchantdocument/{id}:
+    get:
+      tags:
+      - "Merchant"
+      summary: "Get Merchant Document By id"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      - in: "path"
+        name: "id"
+        description: "Get Data By ID"
+        required: true
+        type: "integer"
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/MerchantDocument"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/merchant/Merchantwallet:
+    get:
+      tags:
+      - "Merchant"
+      summary: "Get All Merchant Wallet"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/MerchantWallet"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/merchant/Merchantwallet/{id}:
+    get:
+      tags:
+      - "Merchant"
+      summary: "Get Merchant Wallet By id"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      - in: "path"
+        name: "id"
+        description: "Get Data By ID"
+        required: true
+        type: "integer"
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/MerchantWallet"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/merchant/merchantwalletroute:
+    get:
+      tags:
+      - "Merchant"
+      summary: "Get All Merchant Wallet Route"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/MerchantWalletRoute"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/merchant/merchantwalletroute/{id}:
+    get:
+      tags:
+      - "Merchant"
+      summary: "Get Merchant Wallet Route By id"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      - in: "path"
+        name: "id"
+        description: "Get Data By ID"
+        required: true
+        type: "integer"
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/MerchantWalletRoute"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema:
+            $ref: "#/definitions/500"
+
+  /v1/merchant/{merchantId}/business/{businessId}/bank:
+    get:
+      tags:
+      - "Merchant"
+      summary: "Get Merchant Business Bank Details By merchantId and businessId"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      - in: "path"
+        name: "merchantId"
+        description: "Get Data By merchantId"
+        required: true
+        type: "string"
+      - in: "path"
+        name: "businessId"
+        description: "Get Data By businessId"
+        required: true
+        type: "string"
+      responses:  
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/MerchantBusinessBank"
+        "400":
+          description: "400 Error Response"
+          schema:
+            $ref: "#/definitions/400"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema: 
+            $ref: "#/definitions/500"
+
+  /v1/merchant/{merchantId}/business/{businessId}/document:
+    get:
+      tags:
+      - "Merchant"
+      summary: "Get Merchant Documents Details By merchantId and businessId"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      - in: "path"
+        name: "merchantId"
+        description: "Get Data By merchantId"
+        required: true
+        type: "string"
+      - in: "path"
+        name: "businessId"
+        description: "Get Data By businessId"
+        required: true
+        type: "string"
+      responses:  
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/MerchantDocuments"
+        "400":
+          description: "400 Error Response"
+          schema:
+            $ref: "#/definitions/400"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema: 
+            $ref: "#/definitions/500"
+
+  /v1/merchant/{merchantId}/business/{businessId}/document/{documentId}:
+    get:
+      tags:
+      - "Merchant"
+      summary: "Get Merchant Documents Details By merchantId and businessId"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      - in: "path"
+        name: "merchantId"
+        description: "Get Data By merchantId"
+        required: true
+        type: "string"
+      - in: "path"
+        name: "businessId"
+        description: "Get Data By businessId"
+        required: true
+        type: "string"
+      - in: "path"
+        name: "documentId"
+        description: "Get Data By documentId"
+        required: true
+        type: "string"
+      responses:  
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/MerchantDocuments"
+        "400":
+          description: "400 Error Response"
+          schema:
+            $ref: "#/definitions/400"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema: 
+            $ref: "#/definitions/500"
+
+  /v1/merchant/{merchantId}/business/{businessId}/businessowner:
+    get:
+      tags:
+      - "Merchant"
+      summary: "Get Merchant Business Owner By merchantId and businessId"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      - in: "path"
+        name: "merchantId"
+        description: "Get Data By merchantId"
+        required: true
+        type: "string"
+      - in: "path"
+        name: "businessId"
+        description: "Get Data By businessId"
+        required: true
+        type: "string"
+      responses:  
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/MerchantBusinesOwner"
+        "400":
+          description: "400 Error Response"
+          schema:
+            $ref: "#/definitions/400"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema: 
+            $ref: "#/definitions/500"
+
+  /v1/merchant/{merchantId}/business/{businessId}/businessowner/{businessownerId}:
+    get:
+      tags:
+      - "Merchant"
+      summary: "Get Merchant Business Owner By merchantId, businessId and businessownerId"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      - in: "path"
+        name: "merchantId"
+        description: "Get Data By merchantId"
+        required: true
+        type: "string"
+      - in: "path"
+        name: "businessId"
+        description: "Get Data By businessId"
+        required: true
+        type: "string"
+      - in: "path"
+        name: "businessownerId"
+        description: "Get Data By businessownerId"
+        required: true
+        type: "string"
+      responses:  
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/MerchantBusinesOwner"
+        "400":
+          description: "400 Error Response"
+          schema:
+            $ref: "#/definitions/400"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema: 
+            $ref: "#/definitions/500"
+
+  /v1/merchant/{merchantId}/business/{businessId}/businessrepresentative:
+    get:
+      tags:
+      - "Merchant"
+      summary: "Get Merchant Business Representative By merchantId and businessId"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      - in: "path"
+        name: "merchantId"
+        description: "Get Data By merchantId"
+        required: true
+        type: "string"
+      - in: "path"
+        name: "businessId"
+        description: "Get Data By businessId"
+        required: true
+        type: "string"
+      responses:  
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/MerchantBusinessRepresentative"
+        "400":
+          description: "400 Error Response"
+          schema:
+            $ref: "#/definitions/400"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema: 
+            $ref: "#/definitions/500"
+
+  /v1/merchant/{merchantId}/bank:
+    get:
+      tags:
+      - "Merchant"
+      summary: "Get Merchant Bank Details By merchantId"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      - in: "path"
+        name: "merchantId"
+        description: "Get Data By merchantId"
+        required: true
+        type: "string"
+      responses:  
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/MerchantBank"
+        "400":
+          description: "400 Error Response"
+          schema:
+            $ref: "#/definitions/400"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema: 
+            $ref: "#/definitions/500"
+
+  /v1/merchant/{merchantId}/business/{businessId}:
+    get:
+      tags:
+      - "Merchant"
+      summary: "Get Merchant Business Profile By merchantId and businessId"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      - in: "path"
+        name: "merchantId"
+        description: "Get Data By merchantId"
+        required: true
+        type: "string"
+      - in: "path"
+        name: "businessId"
+        description: "Get Data By businessId"
+        required: true
+        type: "string"
+      responses:  
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/MerchantBusinessProfile"
+        "400":
+          description: "400 Error Response"
+          schema:
+            $ref: "#/definitions/400"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema: 
+            $ref: "#/definitions/500"
+
+    put:
+      tags:
+      - "Merchant"
+      summary: "Update Merchant Business Profile By merchantId and businessId"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      - in: "path"
+        name: "merchantId"
+        description: "Filter Data By merchantId"
+        required: true
+        type: "string"
+      - in: "path"
+        name: "businessId"
+        description: "Filter Data By businessId"
+        required: true
+        type: "string"
+      - name: "body"
+        in: "body"
+        required: true
+        schema:
+          $ref: "#/definitions/MerchantBusinessProfileUpdate"
+      responses:  
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/DataUpdate"
+        "400":
+          description: "400 Error Response"
+          schema:
+            $ref: "#/definitions/400"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema: 
+            $ref: "#/definitions/500" 
+
+  /v1/merchant/{merchantId}/business/{businessId}/bank/{bankId}:
+    get:
+      tags:
+      - "Merchant"
+      summary: "Get Merchant Business Bank By merchantId, businessId and bankId"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      - in: "path"
+        name: "merchantId"
+        description: "Get Data By merchantId"
+        required: true
+        type: "string"
+      - in: "path"
+        name: "businessId"
+        description: "Get Data By businessId"
+        required: true
+        type: "string"
+      - in: "path"
+        name: "bankId"
+        description: "Get Data By bankId"
+        required: true
+        type: "string"
+      responses:  
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/MerchantBank"
+        "400":
+          description: "400 Error Response"
+          schema:
+            $ref: "#/definitions/400"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema: 
+            $ref: "#/definitions/500"
+
+    put:
+      tags:
+      - "Merchant"
+      summary: "Update Merchant Bank Details By Merchant Id and Business Id"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      - in: "path"
+        name: "merchantId"
+        description: "Filter Data By merchantId"
+        required: true
+        type: "string"
+      - in: "path"
+        name: "businessId"
+        description: "Filter Data By businessId"
+        required: true
+        type: "string"
+      - in: "path"
+        name: "bankId"
+        description: "Filter Data By bankId"
+        required: true
+        type: "string"
+      - name: "body"
+        in: "body"
+        required: true
+        schema:
+          $ref: "#/definitions/MerchantBusinessBankUpdate"
+      responses:  
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/DataUpdate"
+        "400":
+          description: "400 Error Response"
+          schema:
+            $ref: "#/definitions/400"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema: 
+            $ref: "#/definitions/500" 
+
+  /v1/merchant/{merchantId}/enable:
+    put:
+      tags:
+      - "Merchant"
+      summary: "Enable Merchant By Merchant Id"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      - in: "path"
+        name: "merchantId"
+        description: "Get Data By merchantId"
+        required: true
+        type: "string"
+      responses:  
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/DataUpdate"
+        "400":
+          description: "400 Error Response"
+          schema:
+            $ref: "#/definitions/400"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema: 
+            $ref: "#/definitions/500"
+
+  /v1/merchant/{merchantId}/disable:
+    put:
+      tags:
+      - "Merchant"
+      summary: "Disable Merchant By Merchant Id"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      - in: "path"
+        name: "merchantId"
+        description: "Get Data By merchantId"
+        required: true
+        type: "string"
+      responses:  
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/DataUpdate"
+        "400":
+          description: "400 Error Response"
+          schema:
+            $ref: "#/definitions/400"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema: 
+            $ref: "#/definitions/500" 
+
+  /v1/merchant/{merchantId}/business/{businessId}/enable:
+    put:
+      tags:
+      - "Merchant"
+      summary: "Enable Business By Merchant Id And Business Id"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      - in: "path"
+        name: "merchantId"
+        description: "Get Data By merchantId"
+        required: true
+        type: "string"
+      - in: "path"
+        name: "businessId"
+        description: "Get Data By businessId"
+        required: true
+        type: "string"
+      responses:  
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/DataUpdate"
+        "400":
+          description: "400 Error Response"
+          schema:
+            $ref: "#/definitions/400"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema: 
+            $ref: "#/definitions/500"
+
+  /v1/merchant/{merchantId}/business/{businessId}/disable:
+    put:
+      tags:
+      - "Merchant"
+      summary: "Disable Business By Merchant Id And Business Id"
+      security:
+        - JWT: []
+      parameters:
+      - name: "app_token_id"
+        in: "header"
+        required: true
+        type: string
+      - name: "app_secret_id"
+        in: "header"
+        required: true
+        type: string
+      - in: "path"
+        name: "merchantId"
+        description: "Get Data By merchantId"
+        required: true
+        type: "string"
+      responses:  
+        "200":
+          description: "Ok"
+          schema:
+            $ref: "#/definitions/DataUpdate"
+        "400":
+          description: "400 Error Response"
+          schema:
+            $ref: "#/definitions/400"
+        "404":
+          description: "404 Error Response"
+          schema:
+            $ref: "#/definitions/404"
+        "500":
+          description: "500 Error Response"
+          schema: 
+            $ref: "#/definitions/500" 
+
+definitions:
+  SignUp:
+    type: object
+    required:
+      - first_name
+      - last_name
+      - user_name
+      - email
+      - password
+      - confirm_password
+      - isd_code
+      - mobile_no
+    properties:
+      first_name:
+        type: string
+        example: "john"
+      middle_name:
+        type: string
+        example: "Doe"
+      last_name:
+        type: string
+        example: "McCarthy"
+      user_name:
+        type: string
+        example: "john_98"
+      email:
+        type: string
+        example: "John@domain.com"
+      isd_code:
+        type: number
+        example: 91
+      country:
+        type: string
+        example: "London"
+      mobile_no:
+        type: number
+        example: 9877777777
+      password:
+        type: string
+        example: "John@8844"
+      confirm_password:
+        type: string
+        example: "John@8844"
+
+  SignUpSuccessfully:
+    type: object
+    properties:
+      success:
+        type: boolean
+        example: true
+      info:
+        type: object
+        properties:
+          message:
+            type: string
+            example: "User Created Successfully"
+          jwt:
+            type: string
+            example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYTA4ZDFhOWMtYzE2OC00YjQ4LWE0YzQtYzg3MDgzYjdkZDg3IiwidXNlcl9lbWFpbCI6InVzZXIxQGVtYWlsLmNvbSIsImlhdCI6MTY0NjI4NjYxMywiZXhwIjoxNjQ2MjkwMjEzfQ.3p-0tvCvBUlK3Cq4m157XOEDLzvRYgwbvvtd16qh2j8"
+  
+  UserDetail:
+    type: object 
+    properties:
+      id:
+        type: string
+        example: 6623d8d1-0d05-4fcf-a0ea-7b30ecf2d1d4
+      allow_login:
+        type: boolean
+        example: true
+      first_name:
+        type: string
+        example: "john"
+      middle_name:
+        type: string
+        example: "Doe"
+      last_name:
+        type: string
+        example: "McCarthy"
+      email:
+        type: string
+        example: "John@domain.com"   
+      account_status:
+        type: string
+        example: "LIVE"
+      block_until:
+        type: string
+        example: 
+      password:
+        type: string 
+        example: "$2b$12$fRJNBJnXXqNAzqVF2WU4E.8kIcW7uujPEfhKQjVrtpXQL1wOgObsG"
+      last_password_modified:
+        type: string
+        example:
+      access_role:
+        type: object
+        $ref: "#/definitions/AdminAccessRole"
+
+  update:
+    type: object
+    properties:
+      first_name:
+        type: string
+        example: "john"
+      middle_name:
+        type: string
+        example: "Doe"
+      last_name:
+        type: string
+        example: "McCarthy"
+      recovery_email:
+        type: string
+        example: "John@domain.com"
+      isd_code:
+        type: number
+        example: 91
+      mobile_no:
+        type: number
+        example: 9877777777
+  
+  Login:
+    type: object
+    required:
+      - email
+      - password
+    properties:
+      email:
+        type: string
+        example: "John@domain.com"
+      password:
+        type: string
+        example: "John@8844"
+
+  LogInSuccessfully:
+    type: object
+    properties:
+      success:
+        type: boolean
+        example: true
+      info:
+        type: object
+        properties:
+          message:
+            type: string
+            example: "Login Successfully"
+          jwt:
+            type: string
+            example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYTA4ZDFhOWMtYzE2OC00YjQ4LWE0YzQtYzg3MDgzYjdkZDg3IiwidXNlcl9lbWFpbCI6InVzZXIxQGVtYWlsLmNvbSIsImlhdCI6MTY0NjI4NjYxMywiZXhwIjoxNjQ2MjkwMjEzfQ.3p-0tvCvBUlK3Cq4m157XOEDLzvRYgwbvvtd16qh2j8"
+  UserPlatform:
+    type: object
+    properties:
+      id:
+        type: string
+        example: 6623d8d1-0d05-4fcf-a0ea-7b30ecf2d1d4
+      app_client_id:
+        type: string
+        example: ae68722b-5901-4de2-bfed-620fcc35be25
+      app_client_secret:
+        type: string
+        example: 36c2c896-9851-4a4a-b498-6af7fd8466ee
+      code:
+        type: string
+        example: APP
+      icon_class:
+        type: string
+        example: mdi mdi-cellphone-iphone
+      title:
+        type: string
+        example: Mobile Applications
+      description:
+        type: string
+        example: This is frontend of this software application and your customers intract with your application with developed mobile apps.
+      domain:
+        type: string
+        example: null
+      email_verification_url:
+        type: string
+        example: null
+      email_change_confirmation_url:
+        type: string
+        example: null
+      forget_password_url:
+        type: string
+        example: null
+      reset_password_url:
+        type: string
+        example: null
+      document_upload_url:
+        type: string
+        example: null
+      white_listed_ip_address:
+        type: string
+        example: null
+      is_enable:
+        type: boolean
+        example: true
+
+  Device:
+    type: object
+    properties:
+      id:
+        type: string
+        example: 1c94a337-66ec-43d6-a04f-ad19f7752af1
+      category:
+        type: string
+        example: 
+      os:
+        type: string
+        example: 
+      os_version:
+        type: string
+        example: 
+      browser_version:
+        type: string
+        example: 
+      vendor:
+        type: string
+        example: 
+      fingerprint:
+        type: string
+        example: 
+      hit_count:
+        type: string
+        example: 
+      client:
+        type: string
+        example: 
+      platform:
+        type: string
+        example: 
+      source:
+        type: string
+        example: 
+      is_bot:
+        type: string
+        example: 
+      is_mobile:
+        type: boolean
+        example: 
+      is_disabled:
+        type: boolean
+        example: true
+      disable_upto:
+        type: string
+        example: 
+  session:
+    type: object
+    properties:
+      access_token:
+        type: string
+        example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYjg2NGQyYjctODA4My00YzFjLTg4MzUtNmE3YmUxMjliMzg2IiwidXNlcl9lbWFpbCI6InBhcnRoYUBhZ3BheXRlY2guY28udWsiLCJ1c2VyX2FjY2Vzc19yb2xlX2lkIjoiOGE4NGE5NjgtZGRjNS00MmIzLTg3OWMtMWU3YTNkNjdjNTMyIiwiaWF0IjoxNjU2Mzk5MjE5LCJleHAiOjE2NTY0MDI4MTl9.n5fnvZkvOsZsO7glmCKZLvbfqGdaHA00u5Dp1Hs-RGQ"
+      token_type:
+        type: string
+        example: "jwt"
+      expire_in:
+        type: string
+        example: "3600"
+
+  UserLoginLog:
+    type: object
+    properties:
+      id:
+        type: string
+        example: 1c94a337-66ec-43d6-a04f-ad19f7752af1
+      ip_address: 
+        type: string
+        example: "191.120.1.1"
+      lat:
+        type: number
+        example: 63.78
+      lng:
+        type: number
+        example: 22.33
+      city:
+        type: string
+        example: "London"
+      region:
+        type: string
+        example: "europe"
+      user_agent:
+        type: string
+        example: 
+      postal_code:
+        type: string
+        example: "2765411"
+      asn:
+        type: string
+        example: 
+      asn_name:
+        type: string
+        example: 
+      asn_domain:
+        type: string
+        example: 
+      asn_type:
+        type: string
+        example: 
+      company_name:
+        type: string
+        example: 
+      company_domain:
+        type: string
+        example: 
+      company_type:
+        type: string
+        example: 
+      carrier_name:
+        type: string
+        example: 
+      is_bot:
+        type: boolean
+        example: 
+      accessed:
+        type: string
+        example: 
+      expiry:
+        type: string
+        example:
+      admin_authentication:
+        $ref: "#/definitions/UserDetail"
+      device:
+        $ref: "#/definitions/Device"
+
+  AdminLoginLog:
+    type: object
+    properties:
+      id:
+        type: string
+        example: "369ac162-72e4-4158-866f-e94e40cdca72"
+      session: 
+        $ref: "#/definitions/session"
+      ip_address: 
+        type: string
+        example: "191.120.1.1"
+      lat:
+        type: number
+        example: 63.78
+      lng:
+        type: number
+        example: 22.33
+      city:
+        type: string
+        example: "London"
+      region:
+        type: string
+        example: "europe"
+      user_agent:
+        type: string
+        example: 
+      postal_code:
+        type: string
+        example: "2765411"
+      asn:
+        type: string
+        example: 
+      asn_name:
+        type: string
+        example: 
+      asn_domain:
+        type: string
+        example: 
+      asn_type:
+        type: string
+        example: 
+      company_name:
+        type: string
+        example: 
+      company_domain:
+        type: string
+        example: 
+      company_type:
+        type: string
+        example: 
+      carrier_name:
+        type: string
+        example: 
+      is_bot:
+        type: boolean
+        example: 
+      accessed:
+        type: string
+        example: 
+      expiry:
+        type: string
+        example:
+      admin_authentication:
+        $ref: "#/definitions/AdminDetail"
+      device:
+        $ref: "#/definitions/Device"
+
+  ResetPassword:
+    type: object
+    required:
+      - current_password
+      - new_password
+      - confirm_password
+    properties:
+      current_password:
+        type: string
+        example: 12345@Adm
+      new_password: 
+        type: string
+        example: 12345@Admin
+      confirm_password:
+        type: string
+        example: 12345@Admin
+      
+  ForgetPasswordEmail:
+    type: object
+    required:
+      - email
+    properties:
+      current_password:
+        type: string
+        example: test@email.com
+
+  ForgetPassword:
+    type: object
+    required:
+      - new_password
+      - confirm_password
+    properties:
+      new_password: 
+        type: string
+        example: 12345@Admin
+      confirm_password:
+        type: string
+        example: 12345@Admin
+
+  ForgetPasswordResponce:
+    type: object
+    properties:
+      success:
+        type: boolean
+        example: true
+      info:
+        properties:
+          message:
+            type: string
+            example: "Please Check Your Email"
+            
+  AccountDisable:
+    type: object
+    properties:
+      success:
+        type: boolean
+        example: false
+      info:
+        properties:
+          message:
+            type: string
+            example: "The Account is Temporarily Blocked"
+
+  PasswordUpdate:
+    type: object
+    properties:
+      success:
+        type: boolean
+        example: true
+      info:
+        properties:
+          message:
+            type: string
+            example: "Password Updated Successfully"
+
+  IncorrectPassword:
+    type: object
+    properties:
+      success:
+        type: boolean
+        example: true
+      info:
+        properties:
+          message:
+            type: string
+            example: "Incorrect Password"
+
+  Accountsuspended:
+    type: object
+    properties:
+      success:
+        type: boolean
+        example: true
+      info:
+        properties:
+          message:
+            type: string
+            example: "The account has been successfully suspended"
+
+  AdminSignUp:
+    type: object
+    required:
+      - first_name
+      - last_name
+      - email
+    properties:
+      first_name:
+        type: string
+        example: "john"
+      middle_name:
+        type: string
+        example: "Doe"
+      last_name:
+        type: string
+        example: "McCarthy"
+      email:
+        type: string
+        example: "John@domain.com"
+
+  AdminDetail:
+    type: object 
+    properties:
+      id:
+        type: string
+        example: 6623d8d1-0d05-4fcf-a0ea-7b30ecf2d1d4
+      allow_login:
+        type: boolean
+        example: true
+      first_name:
+        type: string
+        example: "john"
+      middle_name:
+        type: string
+        example: "Doe"
+      last_name:
+        type: string
+        example: "McCarthy"
+      email:
+        type: string
+        example: "John@domain.com"   
+      account_status:
+        type: string
+        example: "LIVE"
+      block_until:
+        type: string
+        example: 
+      password:
+        type: string 
+        example: "$2b$12$fRJNBJnXXqNAzqVF2WU4E.8kIcW7uujPEfhKQjVrtpXQL1wOgObsG"
+      last_password_modified:
+        type: string
+        example:
+      access_role:
+        type: object
+        $ref: "#/definitions/AdminAccessRole"
+
+  expiry:
+    type: object
+    properties:
+      block_until:
+        type: string
+        example: "2023-06-2023"
+
+  AdminUpdate:
+    type: object
+    properties:
+      first_name:
+        type: string
+        example: "john"
+      middle_name:
+        type: string
+        example: "Doe"
+      last_name:
+        type: string
+        example: "McCarthy"
+
+  AdminAccessRole:
+    type: object
+    properties:
+      id:
+        type: string
+        example: 3b09815e-4a77-43d3-9429-96dc42d66d93
+      title:
+        type: string
+        example: Super Administrator
+      description:
+        type: string
+        example: This is very special access role and it should be only used for system administration. Anyone having this role will have full privileges.
+      is_super_role:
+        type: boolean
+        example: true
+      is_system_role:
+        type: boolean
+        example: true
+      is_editable:
+        type: boolean
+        example: false
+      is_disabled:
+        type: boolean
+        example: false
+      disable_upto:
+        type: string
+        example: null
+
+  MerchantAccessRole:
+    type: object
+    properties:
+      id:
+        type: string
+        example: 3b09815e-4a77-43d3-9429-96dc42d66d93
+      title:
+        type: string
+        example: Merchant
+      description:
+        type: string
+        example: This role has access to the user capabilities.
+      is_super_role:
+        type: boolean
+        example: true
+      is_system_role:
+        type: boolean
+        example: true
+      is_editable:
+        type: boolean
+        example: false
+      is_disabled:
+        type: boolean
+        example: false
+      disable_upto:
+        type: string
+        example: null
+      parent:
+        $ref : '#/definitions/AdminAccessRole'
+
+  EmailAvailable:
+    type: object
+    properties:
+      success:
+        type: boolean
+        example: true
+      info:
+        properties:
+          message:
+            type: string
+            example: "Email is Available For Use"
+
+  AdminLogout:
+    type: object
+    properties:
+      success:
+        type: boolean
+        example: true
+      info:
+        properties:
+          message:
+            type: string
+            example: "You have been Logged out Successfully"
+
+  EmailNotAvailable:
+    type: object
+    properties:
+      success:
+        type: boolean
+        example: true
+      info:
+        properties:
+          message:
+            type: string
+            example: "Email Already Exists"
+
+  UsernameAvailable:
+    type: object
+    properties:
+      success:
+        type: boolean
+        example: true
+      info:
+        properties:
+          message:
+            type: string
+            example: "Username is Available For Use"
+
+  UsernameNotAvailable:
+    type: object
+    properties:
+      success:
+        type: boolean
+        example: true
+      info:
+        properties:
+          message:
+            type: string
+            example: "Username Already Exists"
+
+  DataUpdate:
+    type: object
+    properties:
+      success:
+        type: boolean
+        example: true
+      info:
+        properties:
+          message:
+            type: string
+            example: "Data Updated Successfully"
+
+  Otp:
+    type: object
+    required:
+      - otp
+    properties:
+      otp:
+        type: number
+        example: 517689
+
+  SentOtp:
+    type: object
+    properties:
+      success:
+        type: boolean
+        example: true
+      info:
+        properties:
+          message:
+            type: string
+            example: "OTP is sent"
+  
+  MerchantInformation:
+    type: object
+    properties:
+      id:
+        type: string
+        example: 1c94a337-66ec-43d6-a04f-ad19f7752af1
+      uin: 
+        type: string
+        example: 1655728535965
+      allow_login:
+        type: boolean
+        example: true
+      first_name:
+        type: string
+        example: First
+      middle_name:
+        type: string
+        example: 
+      last_name:
+        type: string
+        example: Last
+      user_name:
+        type: string
+        example: user99
+      email:
+        type: string
+        example: test@email.com
+      recovery_email:
+        type: string
+        example: 
+      account_status:
+        type: string
+        example: LIVE
+      block_until:
+        type: string
+        example: 
+      last_password_modified:
+        type: string
+        example: 
+      is_editable:
+        type: boolean
+        example: true
+      is_email_verified:
+        type: boolean
+        example: false
+      isd_code:
+        type: number
+        example: 91
+      mobile_no:
+        type: string
+        example: 999999999
+      is_mobile_no_verified:
+        type: boolean
+        example: true
+      two_factor_otps_activated:
+        type: boolean
+        example: true
+
+  AdminInformation:
+    type: object
+    properties:
+      id:
+        type: string
+        example: 1c94a337-66ec-43d6-a04f-ad19f7752af1
+      allow_login:
+        type: boolean
+        example: true
+      first_name:
+        type: string
+        example: Admin
+      middle_name:
+        type: string
+        example: 
+      last_name:
+        type: string
+        example: Admin
+      email:
+        type: string
+        example: test@email.com
+      account_status:
+        type: string
+        example: LIVE
+      block_until:
+        type: string
+        example: 
+      last_password_modified:
+        type: string
+        example: 
+
+  AdminAddSuccessfully:
+    type: object
+    properties:
+      success:
+        type: boolean
+        example: true
+      errors:
+        properties:
+          error:
+            type: string
+            example: Admin Added Successfully
+
+  Currency:
+    type: object
+    properties:
+      iso:
+        type: string
+        example: "BOB"
+      iso_numeric:
+        type: number
+        example: 68Merchant
+      common_name:
+        type: string
+        example: "Bolivian boliviano"
+      official_name:
+        type: string
+        example: "Bolivian boliviano"
+      icon:
+        type: string
+        example: "Bs."
+
+  UpdateCurrencyData:
+    type: object
+    properties:
+      iso_numeric:
+        type: number
+        example: 68Merchant
+      common_name:
+        type: string
+        example: "Bolivian boliviano"
+      official_name:
+        type: string
+        example: "Bolivian boliviano"
+      icon:
+        type: string
+        example: "Bs."
+
+  Country:
+    type: object
+    properties:
+      continent_code:
+        type: string
+        example: "AN"
+      iso_2:
+        type: string
+        example: "AQ"
+      iso_3:
+        type: string
+        example: "ATA"
+      iso_numeric:
+        type: number
+        example: 10
+      fips_code:
+        type: string
+        example: "AY"
+      isd_code:
+        type: number
+        example: 672
+      common_name:
+        type: string
+        example: Anguilla
+      official_name:
+        type: string
+        example: Anguilla
+      endonym:
+        type: string
+        example: Anguilla
+      demonym:
+        type: string
+        example: Anguilla
+      is_blocked:
+        type: boolean
+        example: false
+      official_currency_code:
+        $ref : '#/definitions/Currency'
+
+  UpdateCountryData:
+    type: object
+    properties:
+      continent_code:
+        type: string
+        example: "AN"
+      iso_2:
+        type: string
+        example: "AQ"
+      iso_3:
+        type: string
+        example: "ATA"
+      fips_code:
+        type: string
+        example: "AY"
+      isd_code:
+        type: number
+        example: 672
+      common_name:
+        type: string
+        example: Anguilla
+      official_name:
+        type: string
+        example: Anguilla
+      endonym:
+        type: string
+        example: Anguilla
+      demonym:
+        type: string
+        example: Anguilla
+
+  CurrentCountry:
+    type: object
+    properties:
+      city:
+        type: string
+        example: null
+      region:
+        type: string
+        example: null
+      region_code:
+        type: string
+        example: null
+      country_name:
+        type: string
+        example: "India"
+      country_code:
+        type: string
+        example: "IN"
+      continent_name:
+        type: string
+        example: "Asia"
+      continent_code:
+        type: string
+        example: "AS"
+      postal:
+        type: string
+        example: null
+      calling_code:
+        type: number
+        example: 91
+      flag:
+        type: string
+        example: "https://ipdata.co/flags/in.png"
+      emoji_flag:
+        type: string
+        example: null
+      languages:
+        type: array
+        items:
+          type: object
+          properties:
+            name:
+              type: string
+              example: "Hindi"
+            native:
+              type: string
+              example: "हिन्दी"
+            code:
+              type: string
+              example: "hi"
+      Currency:
+        type: object
+        properties:
+            name:
+              type: string
+              example: "Indian Rupee"
+            code:
+              type: string
+              example: "INR"
+            symbol:
+              type: string
+              example: "Rs"
+            native:
+              type: string
+              example: "₹"
+            plural:
+              type: string
+              example: "Indian rupees"
+      time_zone:
+        type: object
+        properties:
+            name:
+              type: string
+              example: "Asia/Kolkata"
+            abbr:
+              type: string
+              example: "IST"
+            offset:
+              type: string
+              example: "+0530"
+            is_dst:
+              type: string
+              example: "false"
+            current_time:
+              type: string
+              example: "2022-06-21T09:28:37+05:30"
+      country:
+        $ref : '#/definitions/Country'
+
+  ChangeCountryStatus:
+    type: object
+    properties:
+      iso_numeric:
+        type: number
+        example: 8
+      block_country:
+        type: boolean
+        example: true
+
+  ChangeMultipleCountryStatus:
+    type: array
+    items: 
+        $ref : '#/definitions/ChangeCountryStatus'
+
+  BusinessRole:  
+    type: object
+    properties:
+      id:
+        type: string
+        example: "2ffb9425-1fcb-45d4-8862-734893c9dca0"
+      code:
+        type: string
+        example: "DIRECTOR"
+      title:
+        type: string
+        example: "Director"
+      display_order:
+        type: number
+        example: 1
+      disabled:
+        type: string
+        example: null
+
+  BusinessLegalEntity:  
+    type: object
+    properties:
+      id:
+        type: string
+        example: "804c6d26-5233-42ef-9aae-3543dfee8b96"
+      code:
+        type: string
+        example: "LIMITED_BY_GUARANTEE"
+      title:
+        type: string
+        example: "Limited by Guarantee"
+      display_order:
+        type: number
+        example: 1
+      disabled:
+        type: string
+        example: null
+
+  BusinessSectors:  
+    type: object
+    properties:
+      id:
+        type: string
+        example: "d3a94952-9feb-4814-b3f5-3fcc5940759b"
+      code:
+        type: string
+        example: "ART_DEALING"
+      title:
+        type: string
+        example: "Art Dealing"
+      display_order:
+        type: number
+        example: 1
+      disabled:
+        type: string
+        example: null
+
+  CivilStatus:  
+    type: object
+    properties:
+      id:
+        type: string
+        example: "e5b5d315-fed0-46f8-8d91-83e91805e06e"
+      code:
+        type: string
+        example: "ANNULLED"
+      title:
+        type: string
+        example: "Annulled"
+      display_order:
+        type: number
+        example: 1
+      disabled:
+        type: string
+        example: null
+
+  ComplianceDocumentCategory:
+    type: object
+    properties:
+      id:
+        type: string
+        example: "e5b5d315-fed0-46f8-8d91-83e91805e06e"
+      code:
+        type: string
+        example: "ANNULLED"
+      title:
+        type: string
+        example: "Annulled"
+      is_business_category:
+        type: boolean
+        example: false,
+      is_public_visible:
+        type: boolean
+        example: true 
+      display_order:
+        type: number
+        example: 1
+      disabled:
+        type: string
+        example: null
+
+  DocumentRejectReason:
+    type: object
+    properties:
+      id:
+        type: string
+        example: "e5b5d315-fed0-46f8-8d91-83e91805e06e"
+      code:
+        type: string
+        example: "ANNULLED"
+      title:
+        type: string
+        example: "Annulled"
+      display_order:
+        type: number
+        example: 1
+      require_note:
+        type: boolean
+        example: true 
+      disabled:
+        type: string
+        example: null
+
+  Honorofic:
+    type: object
+    properties:
+      id:
+        type: string
+        example: "e5b5d315-fed0-46f8-8d91-83e91805e06e"
+      code:
+        type: string
+        example: "ANNULLED"
+      title:
+        type: string
+        example: "Annulled"
+      gender:
+        type: string
+        example: "M"
+      display_order:
+        type: number
+        example: 1
+      disabled:
+        type: string
+
+  BankDetails:
+    type: object
+    properties:
+      id:
+        type: string
+        example: "M"
+      merchant_business_profile_id:
+        type: string
+        example: "M"
+      account_holder_name:
+        type: string
+        example: "M"
+      account_number:
+        type: string
+        example: "M"
+      branch_name:
+        type: string
+        example: "M"
+      country_specific_branch_code:
+        type: string
+        example: "M"
+      is_primary:
+        type: boolean
+        example: true
+
+  Merchant:
+    type: object
+    required:
+      - business_representative_first_name
+      - business_representative_last_name
+      - business_representative_email
+      - business_representative_job_title
+      - business_representative_date_of_birth
+      - business_representative_business_address_line_1
+      - business_representative_phone_number
+      - merchant_code
+      - merchant_title
+      - merchant_subcription_type
+      - merchant_logo
+      - business_name
+      - registration_number
+      - business_legal_entity_type
+      - business_role_text
+      - business_website
+      - merchant_business_profile_business_address_line_1
+      - business_city
+      - business_region
+      - business_post_code
+      - business_phone_number
+      - business_email
+      - business_owner_first_name
+      - business_owner_last_name
+      - business_owner_email
+      - account_holder_name
+      - account_number
+      - branch_name
+      - country_specific_branch_code
+      - business_bank_detail_is_primary
+      - no_of_documents
+      - merchant_document_upload_1
+      - merchant_document_title_1
+      - merchant_document_issuer_1
+      - merchant_document_type_text_1
+      - merchant_document_place_of_issue_1
+      - merchant_document_valid_from_1
+      - merchant_document_valid_through_1
+    properties:
+      business_representative_first_name:
+        type: string
+        example: Firstname
+      business_representative_middle_name:
+        type: string
+        example: Middlename
+      business_representative_last_name:
+        type: string
+        example: Lastname
+      business_representative_email:
+        type: string
+        example: email@email.com
+      business_representative_job_title:
+        type: string
+        example: Job Title
+      business_representative_date_of_birth:
+        type: string
+        example: 1966-01-25
+      business_representative_business_address_line_1:
+        type: string
+        example: Address Line 1
+      business_representative_business_address_line_2:
+        type: string
+        example: Address Line 2
+      business_representative_business_address_line_3:
+        type: string
+        example: Address Line 3
+      business_representative_phone_number:
+        type: string
+        example: 9999999999
+      merchant_code:
+        type: string
+        example: CODE
+      merchant_title:
+        type: string
+        example: Title
+      merchant_subcription_type:
+        type: string
+        example: subcription
+      merchant_logo:
+        type: string
+        example: $
+      business_name:
+        type: string
+        example: Businessname
+      registration_number:
+        type: number
+        example: 7777777777
+      business_legal_entity_type:
+        type: string
+        example: Businesslegalentity
+      business_role_text:
+        type: string
+        example: BusinessRole
+      business_website:
+        type: string
+        example: www.business.com
+      merchant_business_profile_business_address_line_1:
+        type: string
+        example: BusinessAddress1
+      merchant_business_profile_business_address_line_2:
+        type: string
+        example: BusinessAddress2
+      merchant_business_profile_business_address_line_3:
+        type: string
+        example: BusinessAddress3
+      business_city:
+        type: string
+        example: BusinessAddress3
+      business_region:
+        type: string
+        example: BusinessRegion
+      business_post_code:
+        type: string
+        example: 777777
+      business_phone_number:
+        type: string
+        example: 777777777
+      business_email:
+        type: string
+        example: businessemail@email.com
+      business_fax_number:
+        type: string
+        example: 777777
+      business_owner_first_name:
+        type: string
+        example: BusinessFirstName
+      business_owner_middle_name:
+        type: string
+        example: BusinessMiddleName
+      business_owner_last_name:
+        type: string
+        example: BusinessLastName
+      business_owner_email:
+        type: string
+        example: businessowner@email.com
+      account_holder_name:
+        type: string
+        example: AccountHolderName
+      account_number:
+        type: number
+        example: 666666666666
+      branch_name:
+        type: string
+        example: BranchName
+      country_specific_branch_code:
+        type: string
+        example: 12345678
+      business_bank_detail_is_primary:
+        type: boolean
+        example: true
+      no_of_documents:
+        type: number
+        example: 1
+      merchant_document_title_1:
+        type: string
+        example: DocumentTitle
+      merchant_document_issuer_1:
+        type: string
+        example: Issuer
+      merchant_document_type_text_1:
+        type: string
+        example: DocumentType
+      merchant_document_place_of_issue_1:
+        type: string
+        example: Place
+      merchant_document_valid_from_1:
+        type: string
+        example: 2021-01-25
+      merchant_document_valid_through_1:
+        type: string
+        example: 2021-05-25
+
+  MerchantBusinessProfile:
+    type: object
+    properties:
+      id:
+        type: string
+        example: "e5b5d315-fed0-46f8-8d91-83e91805e06e"
+      business_name:
+        type: string
+        example: "ANNULLED"
+      registration_number:
+        type: string
+        example: "Annulled"
+      business_legal_entity_type:
+        type: string
+        example: "M"
+      business_role_text:
+        type: string
+        example: "e5b5d315-fed0-46f8-8d91-83e91805e06e"
+      business_website:
+        type: string
+        example: "ANNULLED"
+      business_address_line_1:
+        type: string
+        example: "Annulled"
+      business_address_line_2:
+        type: string
+        example: "Annulled"
+      business_address_line_3:
+        type: string
+        example: "Annulled"
+      business_city:
+        type: string
+        example: "UK"
+      business_region:
+        type: string
+        example: "UK"
+      business_post_code:
+        type: string
+        example: "700091"
+      business_phone_number:
+        type: string
+        example: "7044952145"
+      business_email:
+        type: string
+        example: "dipronil@agpaytech.co.uk"
+      business_fax_number:
+        type: string
+        example: 9704495214
+
+  MerchantBusinessProfileUpdate:
+    type: object
+    properties:
+      business_name:
+        type: string
+        example: "ANNULLED"
+      registration_number:
+        type: string
+        example: "Annulled"
+      business_legal_entity_type:
+        type: string
+        example: "M"
+      business_role_text:
+        type: string
+        example: "e5b5d315-fed0-46f8-8d91-83e91805e06e"
+      business_website:
+        type: string
+        example: "ANNULLED"
+      business_address_line_1:
+        type: string
+        example: "Annulled"
+      business_address_line_2:
+        type: string
+        example: "Annulled"
+      business_address_line_3:
+        type: string
+        example: "Annulled"
+      business_city:
+        type: string
+        example: "UK"
+      business_region:
+        type: string
+        example: "UK"
+      business_post_code:
+        type: string
+        example: "700091"
+      business_phone_number:
+        type: string
+        example: "7044952145"
+      business_email:
+        type: string
+        example: "dipronil@agpaytech.co.uk"
+      business_fax_number:
+        type: string
+        example: 9704495214
+
+  MerchantDocument:
+    type: object
+    properties:
+      id:
+        type: string
+        example: "M"
+      document_type_text:
+        type: string
+        example: "M"
+      document_number:
+        type: string
+        example: "1"
+      issuer_1:
+        type: string
+        example: "M"
+      place_of_issue_1:
+        type: string
+        example: "bchgd" 
+      valid_form_1:
+        type: string
+        example: "bchgd" 
+      valid_through_1:
+        type: string
+        example: "bchgd" 
+
+  MerchantWallet:
+    type: object
+    properties:
+      id:
+        type: string
+        example: "M"
+      credit:
+        type: string
+        example: "M"
+      balance:
+        type: string
+        example: "M"
+      remote_balance:
+        type: string
+        example: "M"
+      recomended_balances:
+        type: string
+        example: "bchgd" 
+      disabled_until:
+        type: string
+        example: "bchgd" 
+
+  MerchantWalletRoute:
+    type: object
+    properties:
+      id:
+        type: string
+        example: "M"
+
+  MerchantBusinessBank:
+    type: object
+    properties:
+      id:
+        type: string
+        example: "2b133a21-4d60-406b-9ee1-0cbb97799480"
+      account_holder_name:
+        type: string
+        example: "Arnab"
+      account_number:
+        type: string
+        example: "919804633145"
+      branch_name:
+        type: string
+        example: "Hooghly"
+      country_specific_branch_code:
+        type: string
+        example: "12345678"
+      is_primary:
+        type: boolean
+        example: false
+
+  MerchantBusinessBankUpdate:
+    type: object
+    properties:
+      account_holder_name:
+        type: string
+        example: "Arnab"
+      account_number:
+        type: string
+        example: "919804633145"
+      branch_name:
+        type: string
+        example: "Hooghly"
+      country_specific_branch_code:
+        type: string
+        example: "12345678"
+      is_primary:
+        type: boolean
+        example: false        
+
+  MerchantDocuments:
+    type: object
+    properties:
+      id:
+        type: string
+        example: "aa1fa102-9b4e-4c41-80ec-f659368ccfa1"
+      document_type_text:
+        type: string
+        example: "Voter Id"
+      document_url:
+        type: string
+        example: "./FILESYSTEDEV/cfffbc67-50ba-44aa-96e3-8ec8df5d034c_Screenshot from 2022-04-12 17-37-48.png"
+      issuer:
+        type: string
+        example: "User 2"
+      place_of_issue:
+        type: string
+        example: "Place of issue"
+      valid_form:
+        type: string
+        example: "2022-05-15"
+      valid_through:
+        type: string
+        example: "2025-05-15" 
+
+  MerchantBusinesOwner:
+    type: object
+    properties:
+      id:
+        type: string
+        example: "9beecd5e-fbad-4304-b5c2-42bb3052a1fb"
+      first_name:
+        type: string
+        example: "Dipronil"
+      middle_name:
+        type: string
+        example: ""
+      last_name:
+        type: string
+        example: "Das"
+      email:
+        type: string
+        example: "dipronil1@gmail.com"
+
+  MerchantBusinessRepresentative:
+    type: object
+    properties:
+      id:
+        type: string
+        example: "c8baa32e-c67a-4215-8686-5ccd85a0b258"
+      first_name:
+        type: string
+        example: "Dipronil"
+      middle_name:
+        type: string
+        example: ""
+      last_name:
+        type: string
+        example: "Das"
+      email:
+        type: string
+        example: "dipronil1@gmail.com"
+      job_title:
+        type: string
+        example: "Job Title"
+      date_of_birth:
+        type: string
+        example: '1966-01-25T00:00:00.000Z'
+      business_address_line1:
+        type: string
+        example: 'Kolkata'
+      business_address_line2:
+        type: string
+        example: ''
+      business_address_line3:
+        type: string
+        example: ''
+      phone_number:
+        type: string
+        example: '9800668877'    
+
+  MerchantBank:    
+    type: object
+    properties:
+      id:
+        type: string
+        example: "f33c7487-0bf7-4095-a708-451572170c95"
+      account_holder_name:
+        type: string
+        example: "Arnab Bhadra"
+      account_number:
+        type: string
+        example: "91987456321234"
+      branch_name:
+        type: string
+        example: "Branch Name"
+      country_specific_branch_code:
+        type: string
+        example: "12345678"
+      is_primary:
+        type: boolean
+        example: true     
+
+  DataNotFound:
+    type: object
+    properties:
+      success:
+        type: boolean
+        example: false
+      errors:
+        properties:
+          error:
+            type: string
+            example: "Data Not Found"
+
+  400:
+    type: object
+    properties:
+      success:
+        type: boolean
+        example: false
+      errors:
+        properties:
+          error:
+            type: string
+            example: "Validation Error! Please try again"
+
+  401:
+    type: object
+    properties:
+      success:
+        type: boolean
+        example: false
+      errors:
+        properties:
+          error:
+            type: string
+            example: "Unauthorized! User Not Found! Please try again"
+            
+
+  404:
+    type: object
+    properties:
+      success:
+        type: boolean
+        example: false
+      errors:
+        properties:
+          error:
+            type: string
+            example: "Page not found"
+
+  500:
+    type: object
+    properties:
+      success:
+        type: boolean
+        example: false
+      errors:
+        properties:
+          error:
+            type: string
+            example: "Please try again after some time."
+    
